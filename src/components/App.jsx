@@ -6,16 +6,26 @@ import { Layout, Header, HeaderContacts } from './Layout';
 
 const INITIALE_STATE = {
   contacts: [
-    { id: 'id-1', name: 'RosieSimpson', number: '459-12-56' },
-    { id: 'id-2', name: 'HermioneKline', number: '443-89-12' },
-    { id: 'id-3', name: 'EdenClements', number: '645-17-79' },
-    { id: 'id-4', name: 'AnnieCopeland', number: '227-91-26' },
+    { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
+    { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
   ],
   filter: '',
 };
+const LS_CONTACT = 'contacts';
 
 export class App extends Component {
   state = { ...INITIALE_STATE };
+
+  componentDidMount() {
+    const stateFromStorage = JSON.parse(localStorage.getItem(LS_CONTACT));
+    if (stateFromStorage === null) return;
+    this.setState({ contacts: stateFromStorage });
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (prevState.contacts.length !== this.state.contacts.length)
+      localStorage.setItem(LS_CONTACT, JSON.stringify(this.state.contacts));
+  }
 
   addContact = newContact => {
     const { contacts } = this.state;
@@ -64,7 +74,6 @@ export class App extends Component {
         <HeaderContacts>Contacts</HeaderContacts>
         <Filter value={this.state.filter} changeFilter={this.changeFilter} />
         <ContactList
-          //list={this.state.contacts}
           list={foundContact}
           handleDelete={this.handleDeleteContact}
         />
